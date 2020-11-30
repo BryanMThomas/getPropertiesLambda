@@ -1,20 +1,26 @@
 var AWS = require("aws-sdk");
 
-var ddb = new AWS.DynamoDB.DocumentClient({region: "us-west-2"});
+var ddb = new AWS.DynamoDB.DocumentClient({
+    region: "us-west-2"
+});
 
 exports.handler = async (event, context, callback) => {
-    
- return await readProperties().then(data => {
-     data.Items.forEach(function(item){
-         console.log(item.address)
-     })
-     return data.Items
- }).catch((err) => {
-     console.error(err);
- })
+    console.log("a")
+    console.log(event["queryStringParameters"])
+    return await readProperties().then(data => {
+        let response = {
+            "isBase64Encoded": false,
+            "statusCode": 200,
+            "headers": {},
+            "body": JSON.stringify(data.Items)
+        }
+        return response
+    }).catch((err) => {
+        console.error(err);
+    })
 };
 
-function readProperties(){
+function readProperties() {
     const params = {
         TableName: 'properties-table',
         Limit: 10
